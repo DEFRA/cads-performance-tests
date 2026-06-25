@@ -12,8 +12,9 @@ fi
 JM_SCENARIOS=${JM_HOME}/scenarios
 JM_REPORTS=${JM_HOME}/reports
 JM_LOGS=${JM_HOME}/logs
+JM_HTML_OUTPUT=/tmp/jmeter-html-${NOW}
 
-mkdir -p ${JM_REPORTS} ${JM_LOGS}
+mkdir -p ${JM_REPORTS} ${JM_LOGS} ${JM_HTML_OUTPUT}
 
 TEST_SCENARIO=${TEST_SCENARIO:-test}
 SCENARIOFILE=${JM_SCENARIOS}/${TEST_SCENARIO}.jmx
@@ -27,18 +28,27 @@ SERVICE_ENDPOINT=${SERVICE_ENDPOINT:-service-name.${ENVIRONMENT}.cdp-int.defra.c
 SERVICE_PORT=${SERVICE_PORT:-443}
 SERVICE_URL_SCHEME=${SERVICE_URL_SCHEME:-https}
 
-# Run the test suite
-jmeter -n -t ${SCENARIOFILE} -e -l "${REPORTFILE}" -o ${JM_REPORTS} -j ${LOGFILE} -f \
+# Run the test suite. Write HTML report to a temp dir because the mounted
+# reports volume may contain files from a previous run.
+jmeter -n -t ${SCENARIOFILE} -e -l "${JM_REPORTS}/${REPORTFILE}" -o ${JM_HTML_OUTPUT} -j ${LOGFILE} -f \
 -Jenv="${ENVIRONMENT}" \
 -Jdomain="${SERVICE_ENDPOINT}" \
 -Jport="${SERVICE_PORT}" \
 -Jprotocol="${SERVICE_URL_SCHEME}"
 
+test_exit_code=$?
+if [ $test_exit_code -ne 0 ]; then
+  echo "JMeter failed with exit code $test_exit_code"
+  exit $test_exit_code
+fi
+
+cp -r ${JM_HTML_OUTPUT}/. ${JM_REPORTS}/
+
 # Publish the results into S3 so they can be displayed in the CDP Portal
 if [ -n "$RESULTS_OUTPUT_S3_PATH" ]; then
   # Copy the CSV report file and the generated report files to the S3 bucket
    if [ -f "$JM_REPORTS/index.html" ]; then
-      aws --endpoint-url=$S3_ENDPOINT s3 cp "$REPORTFILE" "$RESULTS_OUTPUT_S3_PATH/$REPORTFILE"
+      aws --endpoint-url=$S3_ENDPOINT s3 cp "${JM_REPORTS}/${REPORTFILE}" "$RESULTS_OUTPUT_S3_PATH/$REPORTFILE"
       aws --endpoint-url=$S3_ENDPOINT s3 cp "$JM_REPORTS" "$RESULTS_OUTPUT_S3_PATH" --recursive
       if [ $? -eq 0 ]; then
         echo "CSV report file and test results published to $RESULTS_OUTPUT_S3_PATH"

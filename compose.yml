@@ -12,8 +12,8 @@ services:
       S3_ENDPOINT: 'http://localstack:4566'
       RESULTS_OUTPUT_S3_PATH: 's3://test-results'
       ENVIRONMENT: local
-      SERVICE_ENDPOINT: localhost
-      SERVICE_PORT: 3000
+      SERVICE_ENDPOINT: service
+      SERVICE_PORT: 5555
       SERVICE_URL_SCHEME: http
     networks:
       - performance-tests
@@ -21,14 +21,14 @@ services:
   localstack:
     image: localstack/localstack:4.3.0
     ports:
-      - '4566:4566' # LocalStack Gateway
-      - '4510-4559:4510-4559' # external services port range
+      - '4566:4566'
+      - '4510-4559:4510-4559'
     restart: always
     env_file:
       - 'compose/aws.env'
     environment:
       DEBUG: ${DEBUG:-1}
-      LS_LOG: WARN # Localstack DEBUG Level
+      LS_LOG: WARN
       SERVICES: s3, sqs, sns
       LOCALSTACK_HOST: 127.0.0.1
     volumes:
@@ -44,39 +44,49 @@ services:
 
   redis:
     image: redis:7.2.3-alpine3.18
-    ports:
-      - '6379:6379'
     restart: always
     networks:
       - performance-tests
 
+  postgres:
+    image: postgres:16.6
+    env_file:
+      - 'compose/postgres.env'
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-cads_data_service}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d cads_data_service']
+      interval: 3s
+      start_period: 5s
+      retries: 5
+    networks:
+      - performance-tests
+
   service:
-    # replace service-name with the name of your service being performace tested
-    image: defradigital/service-name:${SERVICE_VERSION:-latest}
+    image: defradigital/cads-data-service:${SERVICE_VERSION:-latest}
     ports:
-      - '3000:3000'
-    links:
-      - 'localstack:localstack'
-      - 'redis:redis'
+      - '5555:5555'
     depends_on:
       localstack:
         condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
     env_file:
       - 'compose/aws.env'
-    environment:
-      PORT: 3000
-      NODE_ENV: development
-      REDIS_HOST: redis
-      USE_SINGLE_INSTANCE_CACHE: true
+      - 'compose/postgres.env'
+      - 'compose/cads-service.env'
     healthcheck:
-      test: ['CMD', 'curl', 'localhost:3000/health']
+      test: ['CMD', 'curl', '-f', 'http://localhost:5555/health']
       interval: 5s
-      start_period: 5s
-      retries: 3
+      start_period: 30s
+      retries: 10
     networks:
       - performance-tests
 
 networks:
   performance-tests:
     driver: bridge
-

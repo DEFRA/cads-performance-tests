@@ -44,14 +44,12 @@
           </ResponseAssertion>
           <hashTree/>
         </hashTree>
-      </hashTree>
-      <hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Locations API - Get locations for a given CPH and last modified date">
           <stringProp name="TestPlan.comments">Get locations for a given CPH and last modified date</stringProp>
           <stringProp name="HTTPSampler.domain">${__P(domain, cads-data-service.${__P(env)}.cdp-int.defra.cloud)}</stringProp>
           <stringProp name="HTTPSampler.protocol">${__P(protocol, https)}</stringProp>
           <stringProp name="HTTPSampler.port">${__P(port, 443)}</stringProp>
-          <stringProp name="HTTPSampler.path">/locations?cph=AH-00%2F585%2F0044&lastModifiedDate=2005-06-14</stringProp>
+          <stringProp name="HTTPSampler.path">/locations?cph=AH-00%2F585%2F0044&amp;lastModifiedDate=2005-06-14</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -72,8 +70,6 @@
           </ResponseAssertion>
           <hashTree/>
         </hashTree>
-      </hashTree>
-      <hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Locations API - Get locations for a given CPH">
           <stringProp name="TestPlan.comments">Get locations for a given CPH</stringProp>
           <stringProp name="HTTPSampler.domain">${__P(domain, cads-data-service.${__P(env)}.cdp-int.defra.cloud)}</stringProp>
@@ -100,8 +96,6 @@
           </ResponseAssertion>
           <hashTree/>
         </hashTree>
-      </hashTree>
-      <hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Locations API - Get locations by last modified date">
           <stringProp name="TestPlan.comments">Get locations by last modified date</stringProp>
           <stringProp name="HTTPSampler.domain">${__P(domain, cads-data-service.${__P(env)}.cdp-int.defra.cloud)}</stringProp>

@@ -49,7 +49,7 @@
           <stringProp name="HTTPSampler.domain">${__P(domain, cads-data-service.${__P(env)}.cdp-int.defra.cloud)}</stringProp>
           <stringProp name="HTTPSampler.protocol">${__P(protocol, https)}</stringProp>
           <stringProp name="HTTPSampler.port">${__P(port, 443)}</stringProp>
-          <stringProp name="HTTPSampler.path">/location?cph=AH-00%2F585%2F0044&amp;lastModifiedDate=2005-06-14</stringProp>
+          <stringProp name="HTTPSampler.path">/api/v1/location?cph=AH-00%2F585%2F0044&amp;lastModifiedDate=2005-06-14</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -75,7 +75,7 @@
           <stringProp name="HTTPSampler.domain">${__P(domain, cads-data-service.${__P(env)}.cdp-int.defra.cloud)}</stringProp>
           <stringProp name="HTTPSampler.protocol">${__P(protocol, https)}</stringProp>
           <stringProp name="HTTPSampler.port">${__P(port, 443)}</stringProp>
-          <stringProp name="HTTPSampler.path">/location?cph=AH-00%2F585%2F0044</stringProp>
+          <stringProp name="HTTPSampler.path">/api/v1/location?cph=AH-00%2F585%2F0044</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -101,7 +101,7 @@
           <stringProp name="HTTPSampler.domain">${__P(domain, cads-data-service.${__P(env)}.cdp-int.defra.cloud)}</stringProp>
           <stringProp name="HTTPSampler.protocol">${__P(protocol, https)}</stringProp>
           <stringProp name="HTTPSampler.port">${__P(port, 443)}</stringProp>
-          <stringProp name="HTTPSampler.path">/location?lastModifiedDate=2005-06-14</stringProp>
+          <stringProp name="HTTPSampler.path">/api/v1/location?lastModifiedDate=2005-06-14</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>

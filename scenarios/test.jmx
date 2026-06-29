@@ -44,6 +44,15 @@
           </ResponseAssertion>
           <hashTree/>
         </hashTree>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Locations API Authorization" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Authorization</stringProp>
+              <stringProp name="Header.value">${__P(AUTH_BASIC_TOKEN)}</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Locations API - Get locations for a given CPH and last modified date">
           <stringProp name="TestPlan.comments">Get locations for a given CPH and last modified date</stringProp>
           <stringProp name="HTTPSampler.domain">${__P(domain, cads-data-service.${__P(env)}.cdp-int.defra.cloud)}</stringProp>

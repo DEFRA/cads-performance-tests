@@ -79,7 +79,7 @@
           </ResponseAssertion>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Locations API - Get locations for a given CPH">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Location API - Get locations for a given CPH">
           <stringProp name="TestPlan.comments">Get locations for a given CPH</stringProp>
           <stringProp name="HTTPSampler.domain">${__P(domain, cads-data-service.${__P(env)}.cdp-int.defra.cloud)}</stringProp>
           <stringProp name="HTTPSampler.protocol">${__P(protocol, https)}</stringProp>
@@ -105,7 +105,7 @@
           </ResponseAssertion>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Locations API - Get locations by last modified date">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Location API - Get locations by last modified date">
           <stringProp name="TestPlan.comments">Get locations by last modified date</stringProp>
           <stringProp name="HTTPSampler.domain">${__P(domain, cads-data-service.${__P(env)}.cdp-int.defra.cloud)}</stringProp>
           <stringProp name="HTTPSampler.protocol">${__P(protocol, https)}</stringProp>

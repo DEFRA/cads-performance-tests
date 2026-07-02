@@ -33,11 +33,6 @@ SERVICE_URL_SCHEME=${SERVICE_URL_SCHEME:-https}
 JMETER_ARGS="-Jenv=${ENVIRONMENT} -Jdomain=${SERVICE_ENDPOINT} -Jport=${SERVICE_PORT} -Jprotocol=${SERVICE_URL_SCHEME}"
 # AUTH_BASIC_TOKEN is sent as the full Authorization header value: "Basic <base64>".
 # Accepts base64 only, "Basic <base64>", or "clientId:secret" (encoded automatically).
-# Alternatively set API_KEY_CLIENT_ID and API_KEY_SECRET.
-if [ -z "$AUTH_BASIC_TOKEN" ] && [ -n "$API_KEY_CLIENT_ID" ] && [ -n "$API_KEY_SECRET" ]; then
-  AUTH_BASIC_TOKEN=$(printf '%s:%s' "$API_KEY_CLIENT_ID" "$API_KEY_SECRET" | base64 | tr -d '\n')
-fi
-
 if [ -n "$AUTH_BASIC_TOKEN" ]; then
   AUTH_BASIC_TOKEN=$(printf '%s' "$AUTH_BASIC_TOKEN" | tr -d '\n\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
   while printf '%s' "$AUTH_BASIC_TOKEN" | grep -qi '^[Bb][Aa][Ss][Ii][Cc][[:space:]]'; do

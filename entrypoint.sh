@@ -30,11 +30,25 @@ SERVICE_URL_SCHEME=${SERVICE_URL_SCHEME:-https}
 
 # Run the test suite. Write HTML report to a temp dir because the mounted
 # reports volume may contain files from a previous run.
+JMETER_ARGS="-Jenv=${ENVIRONMENT} -Jdomain=${SERVICE_ENDPOINT} -Jport=${SERVICE_PORT} -Jprotocol=${SERVICE_URL_SCHEME}"
+# AUTH_BASIC_TOKEN is sent as the full Authorization header value: "Basic <base64>".
+# Accepts base64 only, "Basic <base64>", or "clientId:secret" (encoded automatically).
+if [ -n "$AUTH_BASIC_TOKEN" ]; then
+  AUTH_BASIC_TOKEN=$(printf '%s' "$AUTH_BASIC_TOKEN" | tr -d '\n\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+  while printf '%s' "$AUTH_BASIC_TOKEN" | grep -qi '^[Bb][Aa][Ss][Ii][Cc][[:space:]]'; do
+    AUTH_BASIC_TOKEN=$(printf '%s' "$AUTH_BASIC_TOKEN" | sed 's/^[Bb][Aa][Ss][Ii][Cc][[:space:]]*//')
+  done
+  if printf '%s' "$AUTH_BASIC_TOKEN" | grep -q ':'; then
+    AUTH_BASIC_TOKEN=$(printf '%s' "$AUTH_BASIC_TOKEN" | base64 | tr -d '\n')
+  fi
+  AUTH_BASIC_TOKEN="Basic ${AUTH_BASIC_TOKEN}"
+  JMETER_ARGS="$JMETER_ARGS -JAUTH_BASIC_TOKEN=${AUTH_BASIC_TOKEN}"
+else
+  echo "WARNING: AUTH_BASIC_TOKEN is not set; location API requests will likely return 401"
+fi
+
 jmeter -n -t ${SCENARIOFILE} -e -l "${JM_REPORTS}/${REPORTFILE}" -o ${JM_HTML_OUTPUT} -j ${LOGFILE} -f \
--Jenv="${ENVIRONMENT}" \
--Jdomain="${SERVICE_ENDPOINT}" \
--Jport="${SERVICE_PORT}" \
--Jprotocol="${SERVICE_URL_SCHEME}"
+${JMETER_ARGS}
 
 test_exit_code=$?
 if [ $test_exit_code -ne 0 ]; then

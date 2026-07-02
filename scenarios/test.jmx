@@ -48,7 +48,7 @@
           <collectionProp name="HeaderManager.headers">
             <elementProp name="" elementType="Header">
               <stringProp name="Header.name">Authorization</stringProp>
-              <stringProp name="Header.value">${__P(AUTH_BASIC_TOKEN)}</stringProp>
+              <stringProp name="Header.value">Basic ${__P(AUTH_BASIC_TOKEN)}</stringProp>
             </elementProp>
           </collectionProp>
         </HeaderManager>

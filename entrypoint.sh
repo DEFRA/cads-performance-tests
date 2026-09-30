@@ -41,14 +41,38 @@ if [ -n "$AUTH_BASIC_TOKEN" ]; then
     AUTH_BASIC_TOKEN=$(printf '%s' "$AUTH_BASIC_TOKEN" | base64 | tr -d '\n')
   fi
 else
-  echo "WARNING: AUTH_BASIC_TOKEN is not set; location API requests will likely return 401"
+  echo "WARNING: AUTH_BASIC_TOKEN is not set; API requests will likely return 401"
 fi
 
+USER_PROPERTIES=""
+if [ -f "${JM_HOME}/user.properties" ]; then
+  USER_PROPERTIES="-q ${JM_HOME}/user.properties"
+fi
+
+IDENTIFIERS_CSV=${IDENTIFIERS_CSV:-${JM_SCENARIOS}/data/bovine-identifiers.csv}
+
+# Load-profile overrides for scenarios/bovine-animals.jmx (defaults live in the JMX).
+# Example CDP run: BASELINE_THREADS=5 STEP_THREADS=40 PEAK_THREADS=80 SUSTAINED_THREADS=25
 jmeter -n -t ${SCENARIOFILE} -e -l "${JM_REPORTS}/${REPORTFILE}" -o ${JM_HTML_OUTPUT} -j ${LOGFILE} -f \
+  ${USER_PROPERTIES} \
   -Jenv="${ENVIRONMENT}" \
   -Jdomain="${SERVICE_ENDPOINT}" \
   -Jport="${SERVICE_PORT}" \
   -Jprotocol="${SERVICE_URL_SCHEME}" \
+  -JidentifiersCsv="${IDENTIFIERS_CSV}" \
+  -Jbaseline_threads="${BASELINE_THREADS:-2}" \
+  -Jbaseline_ramp="${BASELINE_RAMP:-2}" \
+  -Jbaseline_duration="${BASELINE_DURATION:-30}" \
+  -Jstep_threads="${STEP_THREADS:-10}" \
+  -Jstep_ramp="${STEP_RAMP:-60}" \
+  -Jstep_duration="${STEP_DURATION:-90}" \
+  -Jpeak_threads="${PEAK_THREADS:-20}" \
+  -Jpeak_ramp="${PEAK_RAMP:-5}" \
+  -Jpeak_duration="${PEAK_DURATION:-30}" \
+  -Jsustained_threads="${SUSTAINED_THREADS:-8}" \
+  -Jsustained_ramp="${SUSTAINED_RAMP:-8}" \
+  -Jsustained_duration="${SUSTAINED_DURATION:-120}" \
+  -Jthink_time_ms="${THINK_TIME_MS:-100}" \
   ${AUTH_BASIC_TOKEN:+-JAUTH_BASIC_TOKEN="${AUTH_BASIC_TOKEN}"}
 
 test_exit_code=$?
